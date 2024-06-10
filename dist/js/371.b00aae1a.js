@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkitego_vue_client"]=self["webpackChunkitego_vue_client"]||[]).push([[371],{9371:function(e,n,t){t.r(n),t.d(n,{default:function(){return s}});var i=t(6768);const u={style:{display:"flex","flex-direction":"column","min-height":"100vh"}};function c(e,n,t,c,r,l){return(0,i.uX)(),(0,i.CE)("div",u," Админка ")}var r={name:"AdminView"},l=t(1241);const o=(0,l.A)(r,[["render",c]]);var s=o}}]);
+//# sourceMappingURL=371.b00aae1a.js.map
