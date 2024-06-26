@@ -1,7 +1,7 @@
 <template>
     <div class="posts-list">
         <header class="posts-list__header">
-            Все записи
+            {{ category }}
         </header>
         <ItegoPost
             v-for="article in articles"
@@ -21,6 +21,7 @@ import ItegoLoadMore from '../../components/ItegoLoadMore.vue'
 export default {
     data() {
         return {
+            category: '',
             articles: [],
             count: null,
             page: 1,
@@ -32,9 +33,9 @@ export default {
         ItegoLoadMore
     },
     methods: {
-        async loadArticles() {
+        async getArticles(id) {
             await axios
-                .get(`${serverAddres}/articles?page=${this.page}&limit=${this.limit}`)
+                .get(`${serverAddres}/categories/${id}/articles?page=${this.page}&limit=${this.limit}`)
                 .then(response => {
                     this.articles = [...this.articles, ...response.data.articles];
                     this.count = response.data.totalCount
@@ -44,12 +45,31 @@ export default {
                 .catch(error => {
                     console.error('Error:', error);
                 });
-        }
+        },
+        async getCategory(id) {
+            await axios
+                .get(`${serverAddres}/categories/${id}`)
+                .then(response => {
+                    this.category = response.data.category.name
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        },
+    },
+    beforeRouteUpdate(to, from, next) {
+        // Вызывается, когда параметры маршрута обновляются
+        this.articles = []; // Очистка массива перед загрузкой новых данных
+        this.page = 1;
+        this.getCategory(to.params.id);
+        this.getArticlesByCategory(to.params.id);
+        next();
     },
     mounted() {
-        this.loadArticles()
-        document.title = 'Блог'
-    }
+        document.title = this.category
+        this.getArticles(this.$route.params.id)
+        this.getCategory(this.$route.params.id)
+    },
 }
 </script>
 

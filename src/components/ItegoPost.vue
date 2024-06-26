@@ -1,22 +1,24 @@
 <template>
     <div class="post-card">
-            <RouterLink :to="'/blog/' + article.id">
-                <div class="post-card__title">
-                   {{ article.title }}
-                </div>
-            </RouterLink>
-            <div class="post-card__text">
-                {{ formatText(article.text) }}
+        <RouterLink :to="'/blog/' + article.id">
+            <div class="post-card__title">
+                {{ article.title }}
             </div>
-            <div class="post-card__info">
+        </RouterLink>
+        <!-- <div class="post-card__text">
+            <div v-html="textPrepare"></div>
+        </div> -->
+        <div class="post-card__info">
+            <RouterLink :to="'/blog/categories/' + article.category">
                 <div class="post-card__category">
                     {{ this.category }}
                 </div>
-                <div class="post-card__date">
-                    {{ formatDate(article.createdAt) }}
-                </div>
+            </RouterLink>
+            <div class="post-card__date">
+                {{ formatDate(article.createdAt) }}
             </div>
         </div>
+    </div>
 </template>
 
 <script>
@@ -27,7 +29,8 @@ export default {
     name: 'ItegoPost',
     data() {
         return {
-            category: ''
+            category: '',
+            textPrepare: ''
         }
     },
     props: ['article'],
@@ -66,6 +69,7 @@ export default {
     },
     mounted() {
         this.loadCategory()
+        this.textPrepare = this.formatText(this.article.text)
     }
 }
 </script>
@@ -81,13 +85,14 @@ export default {
     margin-bottom: 10px;
     // border-bottom: 1px solid #eeeeee;
     border-radius: 8px;
-    color: gray;
+    color: #3b3b3b;
     &:active {
         box-shadow: 0 0 15px #dfdfdf;
     }
     &__title {
         color: black;
-        font-size: 28px;
+        font-size: 34px;
+        margin-bottom: 20px;
         &:hover {
             color: $btnHoverCol;
             transition: 0.2s;
@@ -109,8 +114,9 @@ export default {
         border: 1px solid #e7e7e7;
         box-shadow: 0 0 10px #e4e4e4;
         border-radius: 4px;
-        padding: 3px 8px;
+        padding: 4px;
         margin-right: 20px;
+        font-size: 14px;
     }
 }
 </style>

@@ -20,7 +20,7 @@ export default {
         ItegoAbout
     },
     mounted() {
-        document.title = "ITEGO";
+        document.title = "Главная";
     }
 }
 </script>

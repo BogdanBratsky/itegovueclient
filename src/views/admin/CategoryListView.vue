@@ -1,40 +1,41 @@
 <template>
     <div class="category-list">
-       <header class="category-list__header">
-           <div class="category-list__header-title">
+        <header class="category-list__header">
+            <div class="category-list__header-title">
                 Создание, редактирование и удаление категорий
-           </div>
-           <div class="category-list__options">
-                <!-- <div class="post-list__create-btn">
-                    <img src="../../assets/images/interface/create.svg" alt="">
-                    Создать категорию
-                </div> -->
-                <form @submit.prevent="create()" action="" class="category-list__create">
+            </div>
+            <div class="category-list__options">
+                <form @submit.prevent="create" action="" class="category-list__create">
                     <input v-model="formData.name" type="text" placeholder="Название категории">
                     <button>
                         Создать
                         <img src="../../assets/images/interface/create.svg" alt="">
                     </button>
                 </form>
-           </div>
-       </header>
-       <div class="category-list__wrap-header">
-           Cписок категорий
-       </div>
-       <div class="category-list__wrapper">
-           <AdminCategory
+            </div>
+        </header>
+        <div class="category-list__wrap-header">
+            Список категорий
+        </div>
+        <div class="category-list__wrapper">
+            <AdminCategory
                 v-for="category in categories"
                 :key="category.id"
                 :category="category"
-           />
-       </div>
+                :currentEditingId="currentEditingId"
+                @category-updated="updateCategory"
+                @category-deleted="removeCategory"
+                @start-editing="setEditingCategory"
+                @stop-editing="clearEditingCategory"
+            />
+        </div>
     </div>
 </template>
 
 <script>
 import { serverAddres } from '../../../config.js';
 import axios from 'axios';
-import AdminCategory from '../../components/admin/AdminCategory.vue'
+import AdminCategory from '../../components/admin/AdminCategory.vue';
 
 export default {
     data() {
@@ -42,7 +43,8 @@ export default {
             formData: {
                 name: ''
             },
-            categories: []
+            categories: [],
+            currentEditingId: null
         }
     },
     components: {
@@ -58,7 +60,7 @@ export default {
                     }
                 })
                 .then(() => {
-                    window.location.href = `/admin/categories`;
+                    this.loadCategories();
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -68,16 +70,28 @@ export default {
             await axios
                 .get(`${serverAddres}/categories`)
                 .then(response => {
-                    console.log(response.data.categories)
-                    this.categories = response.data.categories
+                    this.categories = response.data.categories;
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
+        },
+        updateCategory(updatedCategory) {
+            const index = this.categories.findIndex(category => category.id === updatedCategory.id);
+            this.$set(this.categories, index, updatedCategory);
+        },
+        removeCategory(id) {
+            this.categories = this.categories.filter(category => category.id !== id);
+        },
+        setEditingCategory(id) {
+            this.currentEditingId = id;
+        },
+        clearEditingCategory() {
+            this.currentEditingId = null;
         }
     },
     beforeMount() {
-        this.loadCategories()
+        this.loadCategories();
     }
 }
 </script>
@@ -107,7 +121,7 @@ export default {
         border: 1px solid #d6d6d6;
         border-radius: 5px;
         background-color: white;
-        box-shadow: 0 0 10px #e7e7e7;
+        // box-shadow: 0 0 10px #e7e7e7;
         padding: 0  0  0 12px;
         input {
             background-color: inherit;
@@ -122,9 +136,9 @@ export default {
         }
         button {
             cursor: pointer;
-            border: none;
             display: flex;
             align-items: center;
+            justify-content: center;
             // box-shadow: -10px 0 5px black;
             height: 100%;
             background-color: $buttonColor;

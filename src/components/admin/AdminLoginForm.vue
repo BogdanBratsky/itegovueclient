@@ -32,18 +32,15 @@ export default {
                     }
                 })
                 .then(response => {
-                    console.log(response.data);
                     // this.token = response.data.token;
                     localStorage.setItem('token', response.data.token);
-                    // window.location.href = '/admin';
+                    localStorage.setItem('name', response.data.name);
+                    localStorage.setItem('success', response.data.success);
+                    window.location.href = '/admin';
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
-
-            // const token = response.data.token;
-            // localStorage.setItem('jwt-token', token);
-            // this.$router.push({ name: 'Admin' });
         }
     }
 };

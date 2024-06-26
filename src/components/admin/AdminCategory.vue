@@ -1,15 +1,30 @@
 <template>
     <div class="admin-category">
-        <div class="admin-category__name">
-            {{ category.name }}
-        </div>
-        <div class="admin-category__options">
-            <div class="admin-category__option" id="edit">
-                <img src="../../assets/images/interface/edit.svg" alt="">
-                Редактировать
+        <template v-if="!isEditing">
+            <div class="admin-category__name">
+                {{ category.name }}
             </div>
-            <deleteBtn @click="showForm()"/>
-        </div>
+            <div class="admin-category__options">
+                <div @click="startEditing" class="admin-category__option" id="edit">
+                    <img src="../../assets/images/interface/edit.svg" alt="">
+                    Редактировать
+                </div>
+                <deleteBtn @click="showForm()"/>
+            </div>
+        </template>
+        <template v-else>
+            <form @submit="updateCategory" class="edit">
+                <input v-model="formData.name" class="edit__editor" type="text" autofocus>
+                <div @click="cancelEditing" class="edit__cancel">
+                    Отмена
+                    <img src="../../assets/images/interface/cancel.svg" alt="">
+                </div>
+                <button type="submit" class="edit__confirm">
+                    Сохранить
+                    <img src="../../assets/images/interface/confirm.svg" alt="">
+                </button>
+            </form>
+        </template>
     </div>
 
     <div class="delete-confirmation" v-if="isOpen">
@@ -18,7 +33,7 @@
         </header>
         <div class="delete-confirmation__options">
             <div id="cancel" @click="isOpen = false">Отмена</div>
-            <div id="delete" @click="deleteCategory()">Удалить</div>
+            <div id="delete" @click="deleteCategory">Удалить</div>
         </div>
     </div>
 
@@ -28,18 +43,26 @@
 <script>
 import { serverAddres } from '../../../config.js';
 import axios from 'axios';
-import deleteBtn from './DeleteBtn.vue'
+import deleteBtn from './DeleteBtn.vue';
 
 export default {
     name: 'AdminCategory',
+    props: ['category', 'currentEditingId'],
     data() {
         return {
+            formData: {
+                name: this.category.name
+            },
             isOpen: false
-        }
+        };
     },
-    props: ['category'],
     components: {
         deleteBtn
+    },
+    computed: {
+        isEditing() {
+            return this.currentEditingId === this.category.id;
+        }
     },
     methods: {
         async deleteCategory() {
@@ -51,26 +74,83 @@ export default {
                     }
                 })
                 .then(() => {
-                    window.location.href = `/admin/categories`;
+                    this.$emit('category-deleted', this.category.id);
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
         },
+        async updateCategory() {
+            await axios
+                .patch(`${serverAddres}/categories/${this.category.id}`, this.formData, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.token}`
+                    }
+                })
+                .then(() => {
+                    this.$emit('category-updated', { ...this.category, name: this.formData.name });
+                    window.location.href = `/admin/categories`;
+                    this.cancelEditing();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        },
+        startEditing() {
+            this.$emit('start-editing', this.category.id);
+        },
+        cancelEditing() {
+            this.$emit('stop-editing');
+        },
         showForm() {
-            this.isOpen = !this.isOpen
-            if (this.isOpen == true) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = 'auto';
-            }
+            this.isOpen = !this.isOpen;
+            document.body.style.overflow = this.isOpen ? 'hidden' : 'auto';
         }
     }
-}
+};
 </script>
 
 <style lang="scss">
 @import '../../variables.scss';
+
+.edit {
+    display: flex;
+    align-items: center;
+    &__editor {
+        border: 1px solid #dddddd;
+        // box-shadow: 0 0 10px #cecece;
+        padding: 0 6px;
+        outline: none;
+        font-size: 20px;
+        max-width: 100%;
+    }
+    div, button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 3px;
+        border: 1px solid #dddddd;
+        outline: none;
+        font-size: 18px;
+        padding: 3px 6px;
+        background-color: white;
+        box-shadow: 0 0 10px #cecece;
+        color: black;
+        img {
+            margin-left: 4px;
+            max-width: 18px;
+        }
+    }
+    &__cancel {
+        margin: 0 6px;
+    }
+    &__confirm {
+        outline: none;
+        // border: none;
+    }
+}
 
 .delete-confirmation {
     z-index: 10;
@@ -169,13 +249,6 @@ export default {
                 transition: 0.2s;
             }
         }
-        #delete {
-            margin-left: 8px;
-            &:hover {
-                background-color: #ffd1d1;
-                transition: 0.2s;
-            }
-    }
     &__name {
         font-size: 20px;
     }

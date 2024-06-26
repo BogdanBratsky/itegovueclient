@@ -1,9 +1,7 @@
 <template>
     <div class="post-create">
-        <div class="post-create__header">
-            Создание статьи
-        </div>
-        <form @submit.prevent="create()" class="post-create__form" action="">
+        <div class="post-create__header">Создание статьи</div>
+        <form @submit.prevent="create()" class="post-create__form">
             <textarea 
                 v-model="formData.title" 
                 ref="titleTextarea"
@@ -12,19 +10,25 @@
                 @input="adjustTextareaHeight('titleTextarea')"
                 autofocus
             ></textarea>
-            <textarea 
+            <Editor
                 v-model="formData.text" 
-                ref="textTextarea"
-                class="post-create__text-input" 
-                placeholder="Текст статьи"
-                @input="adjustTextareaHeight('textTextarea')"
-            ></textarea>
-            <select v-model="formData.category" name="Выбор категории" id="">
-                <option 
-                    v-for="category in categories" 
-                    :key="category.id"
-                    :value="category.id"
-                >
+                api-key="0p026ajwzl6u3x61qmcma8tbtohty2lkzkbv7tttddcnzqx7"
+                :init="{
+                    toolbar_mode: 'sliding',
+                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                    tinycomments_mode: 'embedded',
+                    tinycomments_author: 'Author name',
+                    mergetags_list: [
+                    { value: 'First.Name', title: 'First Name' },
+                    { value: 'Email', title: 'Email' },
+                    ],
+                }"
+                initial-value="Welcome to TinyMCE!"
+            />
+            <div class="">Выбор категории</div>
+            <select v-model="formData.category" name="Выбор категории">
+                <option v-for="category in categories" :key="category.id" :value="category.id">
                     {{ category.name }}
                 </option>
             </select>
@@ -36,11 +40,16 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+import Editor from '@tinymce/tinymce-vue';
 import { serverAddres } from '../../../config.js';
 import axios from 'axios';
 
 export default {
     name: 'AdminCreateArticle',
+    components: {
+        Editor
+    },
     data() {
         return {
             formData: {
@@ -48,7 +57,20 @@ export default {
                 text: '',
                 category: null
             },
-            categories: []
+            categories: [],
+            tinymceConfig: {
+                apiKey: '0p026ajwzl6u3x61qmcma8tbtohty2lkzkbv7tttddcnzqx7',
+                height: 500,
+                menubar: false,
+                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                tinycomments_mode: 'embedded',
+                tinycomments_author: 'Author name',
+                mergetags_list: [
+                    { value: 'First.Name', title: 'First Name' },
+                    { value: 'Email', title: 'Email' },
+                ],
+            }
         };
     },
     methods: {
@@ -67,12 +89,11 @@ export default {
                     console.error('Error:', error);
                 });
         },
-        async loadCategories() {
+        async getCategories() {
             await axios
                 .get(`${serverAddres}/categories`)
                 .then(response => {
-                    console.log(response.data.categories)
-                    this.categories = response.data.categories
+                    this.categories = response.data.categories;
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -85,7 +106,7 @@ export default {
         }
     },
     mounted() {
-        this.loadCategories();
+        this.getCategories();
     }
 }
 </script>
@@ -115,22 +136,17 @@ export default {
         outline: none;
         padding: 12px 0;
         background-color: inherit;
-        resize: none;
-        overflow-y: hidden;
         &::placeholder {
             color: #dfdfdf;
         }
     }
     &__title-input {
-        // margin: 12px 0;
         font-size: 35px;
-        // order: 3;
         &::placeholder {
             font-size: 35px;
         }
     }
-    &__text-input {
-        // height: 12em;
+    .tox-tinymce {
         font-size: 20px;
         &::placeholder {
             font-size: 20px;
@@ -139,7 +155,7 @@ export default {
     select {
         cursor: pointer;
         padding: 5px;
-        width: 200px;
+        max-width: 240px;
         border: 1px solid $borderCol;
         box-shadow: 0 0 12px #eeeeee;
         outline: none;
@@ -149,7 +165,6 @@ export default {
         top: 100%;
         left: 0;
         display: flex;
-        // justify-content: end;
         button {
             user-select: none;
             outline: none;

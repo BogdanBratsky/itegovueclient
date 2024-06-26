@@ -9,8 +9,14 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@editorjs/editorjs": "^2.29.1",
+    "@editorjs/header": "^2.8.1",
+    "@editorjs/image": "^2.9.0",
+    "@editorjs/list": "^1.9.0",
+    "@tinymce/tinymce-vue": "^6.0.1",
     "axios": "^1.7.2",
     "core-js": "^3.8.3",
+    "tinymce": "^7.1.2",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"

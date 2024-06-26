@@ -10,7 +10,7 @@
 export default {
     name: 'MainView',
     mounted() {
-        document.title = "ITEGO";
+        document.title = "Административная панель";
     }
 }
 </script>

@@ -48,7 +48,7 @@ export default {
         border-radius: 14px;
         box-shadow: 0 0 12px #dfdfdf;
         padding: 30px 25px;
-        font-size: 26px;
+        font-size: 20px;
         .emoji {
             font-size: 50px;
             margin-right: 25px;

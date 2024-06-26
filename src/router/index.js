@@ -1,4 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
+import axios from 'axios';
+import { serverAddres } from '../../config.js';
 
 const routes = [
   // маршруты для пользовательской части сайта
@@ -22,8 +24,18 @@ const routes = [
           {
             path: ':id',
             component: () => import('../components/ItegoPostDetails.vue'),
-          }
-        ]  
+          },
+        ]
+      },
+      {
+        path: 'blog/categories',
+        component: () => import('../views/public/PostsView.vue'),
+        children: [
+          {
+            path: ':id',
+            component: () => import('../views/public/CategoriesView.vue'),
+          },
+        ]
       }
     ]
   },
@@ -50,7 +62,7 @@ const routes = [
                 component: () => import('../components/admin/AdminCreateArticle.vue')
               },
               {
-                path: 'edit',
+                path: 'edit/:id',
                 component: () => import('../components/admin/AdminEditArticle.vue')
               }
             ]
@@ -83,32 +95,13 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token');
-
-  console.log('Navigating to:', to.path); // Логирование маршрута
-  console.log('Token present:', !!token); // Логирование наличия токена
-
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!token) {
-      console.log('No token, redirecting to /admin/login');
-      next('/admin/login'); // Если нет токена и пытаемся перейти на защищенную страницу, перенаправляем на страницу входа
-    } else {
-      console.log('Token found, proceeding to', to.path);
-      next();
-    }
-  } else if (to.matched.some(record => record.meta.requiresGuest)) {
-    if (token) {
-      console.log('Token found, redirecting to /admin');
-      next('/admin'); // Перенаправляем авторизованных пользователей с логин-страницы на админку
-    } else {
-      console.log('No token, proceeding to', to.path);
-      next();
-    }
+router.beforeEach(async (to, from, next) => {
+  const success = localStorage.getItem('success') === 'true';
+  if (!success && to.path.startsWith('/admin') && to.path !== '/admin/login') {
+      next('/admin/login');
   } else {
-    console.log('No auth required, proceeding to', to.path);
-    next(); // Продолжаем навигацию для маршрутов, которым не требуется аутентификация
+      next();
   }
 });
 
-export default router
+export default router;

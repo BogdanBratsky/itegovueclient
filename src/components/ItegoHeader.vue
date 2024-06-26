@@ -137,6 +137,7 @@ export default {
         align-items: center;
         color: black;
         background-color: white;
+        border: 1px solid #e2e2e2;
         border-radius: 6px;
         box-shadow: 0 0 12px #e2e2e2;
         padding: 6px 10px;
@@ -160,6 +161,7 @@ export default {
         user-select: none;
         cursor: pointer;
         padding: 6px 10px;
+        border: 1px solid #e2e2e2;
         border-radius: 6px;
         background-color: $buttonColor;
         color: white;

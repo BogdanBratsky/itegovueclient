@@ -1,13 +1,5 @@
 <template>
     <div class="admin-post">
-        <RouterLink :to="'/blog/' + article.id">
-            <div class="admin-post__title">
-                {{ article.title }}
-            </div>
-        </RouterLink>
-        <div class="admin-post__text">
-            {{ formatText(article.text) }}
-        </div>
         <div class="admin-post__info">
             <div style="display: flex; align-items: center;">
                 <div class="admin-post__category">
@@ -17,15 +9,23 @@
                     {{ formatDate(article.createdAt) }}
                 </div>
             </div>
-            <div class="admin-post__options">
-                <router-link to="/admin/articles/edit">
-                    <div class="admin-post__edit">
-                        <img src="../../assets/images/interface/edit.svg" alt="">
-                        Редактировать
-                    </div>
-                </router-link>
-                <deleteBtn @click="showForm()"/>
+        </div>
+        <RouterLink :to="'/blog/' + article.id">
+            <div class="admin-post__title">
+                {{ article.title }}
             </div>
+        </RouterLink>
+        <!-- <div class="admin-post__text">
+            <div v-html="textPrepare"></div>
+        </div> -->
+        <div class="admin-post__options">
+            <router-link :to="'/admin/articles/edit/' + article.id">
+                <div id="edit">
+                    <img src="../../assets/images/interface/edit.svg" alt="">
+                    Редактировать
+                </div>
+            </router-link>
+            <deleteBtn @click="showForm()"/>
         </div>
     </div>
 
@@ -52,7 +52,8 @@ export default {
     data() {
         return {
             category: '',
-            isOpen: false
+            isOpen: false,
+            textPrepare: ''
         }
     },
     components: {
@@ -117,6 +118,7 @@ export default {
     },
     mounted() {
         this.loadCategory();
+        this.textPrepare = this.formatText(this.article.text)
     }
 }
 </script>
@@ -185,31 +187,31 @@ export default {
     margin-bottom: 10px;
     // border-bottom: 1px solid #eeeeee;
     border-radius: 8px;
-    color: gray;
+    color: #242424;
     &:active {
         box-shadow: 0 0 15px #dfdfdf;
     }
     &__options {
         display: flex;
-    }
-    &__edit {
-        user-select: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        padding: 6px 10px;
-        border: 1px solid $borderCol;
-        border-radius: 5px;
-        box-shadow: 0 0 10px #f0f0f0;
-        background-color: $buttonCol;
-        color: black;
-        img {
-            max-width: 16px;
-            margin-right: 6px;
-        }
-        &:hover {
-            background-color: #ffffff;
-            transition: 0.2s;
+        #edit {
+            user-select: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 6px 10px;
+            border: 1px solid $borderCol;
+            border-radius: 5px;
+            box-shadow: 0 0 10px #f0f0f0;
+            background-color: $buttonCol;
+            color: black;
+            img {
+                max-width: 16px;
+                margin-right: 6px;
+            }
+            &:hover {
+                background-color: #ffffff;
+                transition: 0.2s;
+            }
         }
     }
     &__title {
@@ -217,6 +219,7 @@ export default {
         font-size: 28px;
         border-bottom: 1px solid #eeeeee;
         padding-bottom: 16px;
+        margin: 16px 0;
         &:hover {
             color: $btnHoverCol;
             transition: 0.2s;
@@ -227,18 +230,20 @@ export default {
         font-size: 17px;
     }
     &__info {
-        padding-top: 16px;
-        border-top: 1px solid #eeeeee;
+        // padding-top: 16px;
+        // border-top: 1px solid #eeeeee;
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
     &__category {
-        color: black;
-        border: 1px solid gray;
+        color: #2e2e2e;
+        box-shadow: 0 0 10px #f3f3f3;
+        // background-color: #f5f5f5;
+        border: 1px solid #e0e0e0;
         border-radius: 4px;
-        padding: 3px 8px;
-        margin-right: 20px;
+        padding: 3px;
+        margin-right: 12px;
     }
 }
 </style>

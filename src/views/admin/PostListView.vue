@@ -56,7 +56,6 @@ export default {
             await axios
                 .get(`${serverAddres}/articles?page=${this.page}&limit=${this.limit}`)
                 .then(response => {
-                    console.log(response.data)
                     this.articles = [...this.articles, ...response.data.articles];
                     this.count = response.data.totalCount
 

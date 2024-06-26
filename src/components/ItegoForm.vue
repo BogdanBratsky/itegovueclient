@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="sendForm()" action="" class="itego-form">
+    <form v-if="!formSubmitted" @submit.prevent="sendForm()" action="" class="itego-form">
         <div 
             class="itego-form__cancel"
             @click="close"
@@ -19,8 +19,21 @@
             <input v-model="formData.consent" type="checkbox" name="" id="">
             Я разрешаю обработку моих персональных данных
         </div>
+        <div v-if="errorMessage" class="itego-form__error">{{ errorMessage }}</div>
         <button class="itego-form__btn">Отправить</button>
     </form>
+    
+    <div v-if="formSuccess" class="itego-form">
+        <div class="itego-form__succes-text">
+            Спасибо, что оставили заявку!
+        </div>
+        <div class="itego-form__success-img">
+            <img src="../assets/images/interface/success.svg" alt="">
+        </div>
+        <div @click="close" class="itego-form__success-close">
+            Закрыть
+        </div>
+    </div>
 </template>
 
 <script>
@@ -36,12 +49,34 @@ export default {
                 email: '',
                 phone: '',
                 consent: false
-            }
+            },
+            formSubmitted: false, // Добавляем данные о том, была ли форма отправлена
+            formSuccess: false, // Добавляем данные о том, успешно ли прошла отправка
+            errorMessage: '' // Добавляем данные для сообщения об ошибке
         }
     },
     methods: {
+        validateForm() {
+            this.errorMessage = ''; // Сброс сообщения об ошибке
+
+            if (!this.formData.name) {
+                this.errorMessage = 'Пожалуйста, введите ваше имя.';
+                return false;
+            }
+            if (!this.formData.email && !this.formData.phone) {
+                this.errorMessage = 'Пожалуйста, введите ваш телефон или почту.';
+                return false;
+            }
+            if (!this.formData.consent) {
+                this.errorMessage = 'Пожалуйста, разрешите обработку персональных данных.';
+                return false;
+            }
+            return true;
+        },
         async sendForm() {
-            console.log(this.formData)
+            if (!this.validateForm()) {
+                return;
+            }
             await axios
                 .post(`${serverAddres}/send-email`, this.formData, {
                     headers: {
@@ -49,14 +84,22 @@ export default {
                     }
                 })
                 .then(response => {
-                    console.log(response)
+                    if (response.status === 200) {
+                        this.formSubmitted = true;
+                        this.formSuccess = true;
+                    } else {
+                        this.formSubmitted = true;
+                        this.formSuccess = false;
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    this.formSubmitted = true;
+                    this.formSuccess = false;
                 });
         },
         close() {
-            this.$emit('close')
+            this.$emit('close');
         }
     }
 }
@@ -81,6 +124,31 @@ export default {
     box-shadow: 0 0 50px #606060;
     width: 500px;
     border-radius: 12px;
+    &__succes-text {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 30px;
+        padding: 30px 0;
+    }
+    &__success-img {
+        display: flex;
+        justify-content: center;
+        img {
+            max-width: 300px;
+            margin-bottom: 30px;
+        }
+    }
+    &__success-close {
+        cursor: pointer;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+        font-size: 18px;
+        text-decoration: underline;
+        color: $buttonColor;
+    }
     &__cancel {
         user-select: none;
         cursor: pointer;
@@ -117,6 +185,10 @@ export default {
         }
         display: flex;
         margin-bottom: 40px;
+    }
+    &__error {
+        color: red;
+        margin-bottom: 20px;
     }
     &__btn {
         cursor: pointer;

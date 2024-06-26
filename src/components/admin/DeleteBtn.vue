@@ -7,11 +7,7 @@
 
 <script>
 export default {
-    name: 'deleteBtn',
-    data() {
-        return {
-        }
-    }
+    name: 'deleteBtn'
 }
 </script>
 

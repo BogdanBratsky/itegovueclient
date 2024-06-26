@@ -2,7 +2,9 @@
     <div class="">
         <aside class="category-list">
             <label for="" class="category-list__title">Выбор категории</label>
-            <div v-for="category in categories" class="category-list__item">{{ category.name }}</div>
+            <router-link v-for="category in categories" :to="'/blog/categories/' + category.id">
+                <div class="category-list__item">{{ category.name }}</div>
+            </router-link>
         </aside>
     </div>
 </template>
@@ -23,7 +25,6 @@ export default {
             await axios
                 .get(`${serverAddres}/categories`)
                 .then(response => {
-                    console.log(response.data.categories)
                     this.categories = response.data.categories
                 })
                 .catch(error => {

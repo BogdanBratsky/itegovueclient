@@ -33,8 +33,8 @@ export default {
     },
     methods: {
         showForm() {
-            this.isOpen = !this.isOpen
-            if (this.isOpen == true) {
+            this.isOpen = !this.isOpen;
+            if (this.isOpen) {
                 document.body.style.overflow = 'hidden';
             } else {
                 document.body.style.overflow = 'auto';
@@ -44,11 +44,20 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '../variables.scss';
 
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #000000;
+    opacity: 0.6;
+    width: 100%;
+    height: 100vh;
+}
+
 .poster {
-    /* border: 1px solid #dfdfdf; */
     background: white url('../assets/images/poster/poster.svg') no-repeat;
     background-position: right;
     box-shadow: 0 0 12px #dfdfdf;
@@ -56,15 +65,19 @@ export default {
     padding: 30px;
     border-radius: 12px;
     margin-bottom: 10px;
+
     &__title {
-        font-size: 38px;
+        font-size: 2.375rem; // 38px
     }
+
     &__text {
         margin: 30px 0;
-        width: 700px;
-        font-size: 20px;
+        width: 100%;
+        max-width: 700px;
+        font-size: 1.25rem; // 20px
         color: grey;
     }
+
     &__btn {
         user-select: none;
         cursor: pointer;
@@ -73,10 +86,49 @@ export default {
         color: white;
         padding: 8px 16px;
         border-radius: 6px;
-        font-size: 24px;
+        font-size: 1.5rem; // 24px
+
         &:hover {
             background-color: $btnHoverCol;
             transition: 0.2s;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .poster {
+        padding: 20px;
+        border-radius: 8px;
+
+        &__title {
+            font-size: 1.875rem; // 30px
+        }
+
+        &__text {
+            font-size: 1.125rem; // 18px
+        }
+
+        &__btn {
+            font-size: 1.25rem; // 20px
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .poster {
+        padding: 15px;
+        border-radius: 6px;
+
+        &__title {
+            font-size: 1.5rem; // 24px
+        }
+
+        &__text {
+            font-size: 1rem; // 16px
+        }
+
+        &__btn {
+            font-size: 1rem; // 16px
         }
     }
 }
