@@ -53,6 +53,7 @@ export default {
     display: flex;
     align-items: center;
     &__item {
+        cursor: pointer;
         // background-color: $backgroundColor;
         background-color: #f6f6f6;
         padding: 14px 15px;
@@ -64,9 +65,14 @@ export default {
         align-items: center;
         margin-left: 12px;
         & img {
+            user-select: none;
             margin-right: 12px;
             width: 22px;
             height: 22px;
+        }
+        &:hover {
+            box-shadow: 0 8px 10px #ececec;
+            transition: 0.3s;
         }
     }
 } 

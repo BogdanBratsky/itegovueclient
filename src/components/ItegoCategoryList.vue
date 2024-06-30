@@ -22,21 +22,23 @@ export default {
     },
     methods: {
         async loadCategories() {
-            await axios
-                .get(`${serverAddres}/categories`)
-                .then(response => {
-                    this.categories = response.data.categories
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+            try {
+                const response = await axios.get(`${serverAddres}/categories`);
+                this.categories = response.data.categories;
+            } catch (error) {
+                console.error('Error:', error);
+            }
         }
     },
-    mounted() {
-        this.loadCategories()
+    created() {
+        this.loadCategories(); // Загрузка данных при создании компонента
+    },
+    watch: {
+        '$route': 'loadCategories' // Перезагрузка данных при изменении маршрута
     }
 }
 </script>
+
 
 <style lang="scss">
 .category-list {
@@ -73,7 +75,7 @@ export default {
             border-radius: 0 0 8px 8px;
         }
         &:not(:last-child) {
-            border-bottom: 1px solid #d9d9d9;
+            border-bottom: 1px solid #ff0000;
         }
     }
 }

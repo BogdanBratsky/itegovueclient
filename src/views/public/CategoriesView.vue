@@ -62,7 +62,7 @@ export default {
         this.articles = []; // Очистка массива перед загрузкой новых данных
         this.page = 1;
         this.getCategory(to.params.id);
-        this.getArticlesByCategory(to.params.id);
+        this.getArticles(to.params.id); // Заменяем getArticlesByCategory на getArticles
         next();
     },
     mounted() {
@@ -76,6 +76,7 @@ export default {
 <style lang="scss">
 .posts-list {
     &__header {
+        width: 100%;
         font-size: 25px;
         background-color: white;
         box-shadow: 0 0 12px #dfdfdf;

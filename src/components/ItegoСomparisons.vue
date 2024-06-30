@@ -47,7 +47,7 @@
             <tr class="comparisons__table-footer">
                 <td>Всего</td>
                 <td>1 020 000</td>
-                <td>500 000</td>
+                <td style="color: #a77070">500 000</td>
             </tr>
         </table>
     </section>
@@ -102,7 +102,7 @@ export default {
             font-size: 26px;
             & td {
                 padding: 25px;
-                color: #a77070;
+                color: grey;
             }
         }
     }

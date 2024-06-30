@@ -15,6 +15,7 @@
                 </div>
             </RouterLink>
             <div class="post-card__date">
+                <img src="../assets/images/interface/calendar.svg" alt="">
                 {{ formatDate(article.createdAt) }}
             </div>
         </div>
@@ -114,9 +115,17 @@ export default {
         border: 1px solid #e7e7e7;
         box-shadow: 0 0 10px #e4e4e4;
         border-radius: 4px;
-        padding: 4px;
+        padding: 4px 8px;
         margin-right: 20px;
-        font-size: 14px;
+        font-size: 15px;
+    }
+    &__date {
+        display: flex;
+        align-items: center;
+        img {
+            max-width: 14px;
+            margin-right: 8px;
+        }
     }
 }
 </style>
