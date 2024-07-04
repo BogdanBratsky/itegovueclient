@@ -14,7 +14,7 @@
             </div>
         </div>
     </div>
-    <div @click="showForm()" v-if="isOpen" class="background"></div>
+
     <ItegoForm v-if="isOpen" @close="showForm()"/>
 </template>
 
@@ -46,16 +46,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '../variables.scss';
-
-.background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: #000000;
-    opacity: 0.6;
-    width: 100%;
-    height: 100vh;
-}
 
 .poster {
     background: white url('../assets/images/poster/poster.svg') no-repeat;

@@ -16,10 +16,12 @@
                         <img src="../assets/images/contacts/phone.svg" alt="">
                         +7 (499) 348 99 33
                     </div>
-                    <div class="footer-contacts__item">
-                        <img src="../assets/images/contacts/instagram.svg" alt="">
-                        @itegopro
-                    </div>
+                    <a href="https://www.instagram.com/itegopro/">
+                        <div class="footer-contacts__item">
+                            <img src="../assets/images/contacts/instagram.svg" alt="">
+                            @itegopro
+                        </div>
+                    </a>
                 </div>
             </nav>
         </div>
@@ -53,11 +55,11 @@ export default {
     display: flex;
     align-items: center;
     &__item {
-        cursor: pointer;
+        // cursor: pointer;
         // background-color: $backgroundColor;
         background-color: #f6f6f6;
         padding: 14px 15px;
-        // color: gray;
+        color: gray;
         border-radius: 8px;
         // box-shadow: 0 0 12px #dfdfdf;
         font-size: 16px;

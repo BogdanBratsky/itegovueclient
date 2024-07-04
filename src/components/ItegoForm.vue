@@ -28,12 +28,14 @@
             Спасибо, что оставили заявку!
         </div>
         <div class="itego-form__success-img">
-            <img src="../assets/images/interface/success.svg" alt="">
+            <img src="../assets/images/card_imgs/9.svg" alt="">
         </div>
-        <div @click="close" class="itego-form__success-close">
+        <div @click="closeAndResetUrl" class="itego-form__success-close">
             Закрыть
         </div>
     </div>
+
+    <div @click="closeAndResetUrl" class="background"></div>
 </template>
 
 <script>
@@ -42,6 +44,7 @@ import axios from 'axios';
 
 export default {
     name: 'ItegoForm',
+    props: ['close'],
     data() {
         return {
             formData: {
@@ -50,14 +53,19 @@ export default {
                 phone: '',
                 consent: false
             },
-            formSubmitted: false, // Добавляем данные о том, была ли форма отправлена
-            formSuccess: false, // Добавляем данные о том, успешно ли прошла отправка
-            errorMessage: '' // Добавляем данные для сообщения об ошибке
+            formSubmitted: false,
+            formSuccess: false,
+            errorMessage: '',
+            initialUrl: ''
         }
+    },
+    mounted() {
+        // Сохраняем текущий URL при монтировании компонента
+        this.initialUrl = window.location.href;
     },
     methods: {
         validateForm() {
-            this.errorMessage = ''; // Сброс сообщения об ошибке
+            this.errorMessage = '';
 
             if (!this.formData.name) {
                 this.errorMessage = 'Пожалуйста, введите ваше имя.';
@@ -87,6 +95,7 @@ export default {
                     if (response.status === 200) {
                         this.formSubmitted = true;
                         this.formSuccess = true;
+                        this.changeUrl('/thanks');
                     } else {
                         this.formSubmitted = true;
                         this.formSuccess = false;
@@ -100,6 +109,17 @@ export default {
         },
         close() {
             this.$emit('close');
+        },
+        changeUrl(newUrl) {
+            const absoluteUrl = new URL(newUrl, window.location.origin);
+            history.pushState(null, '', absoluteUrl);
+        },
+        closeAndResetUrl() {
+            this.$emit('close');
+            // Возвращаемся к исходному URL
+            history.pushState(null, '', this.initialUrl);
+            // Перезагружаем страницу
+            window.location.reload();
         }
     }
 }
@@ -108,15 +128,25 @@ export default {
 <style lang="scss">
 @import '../variables.scss';
 
+.background {
+    z-index: 6;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #000000;
+    opacity: 0.6;
+    width: 100%;
+    height: 100vh;
+}
+
 .itego-form {
-    // z-index: 10;
-    position: fixed; /* Можно использовать также absolute или relative */
-    top: 50%; /* Располагаем верхнюю границу элемента на 50% от верхнего края родительского блока */
-    left: 50%; /* Располагаем левую границу элемента на 50% от левого края родительского блока */
+    z-index: 10;
+    position: fixed;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
-    // align-items: center;
     padding: 0 40px;
     margin: 12px 0;
     background-color: white;
@@ -124,6 +154,7 @@ export default {
     box-shadow: 0 0 50px #606060;
     width: 500px;
     border-radius: 12px;
+
     &__succes-text {
         display: flex;
         justify-content: center;
@@ -171,7 +202,6 @@ export default {
         margin-bottom: 6px;
     }
     &__input {
-        // background-color: $backgroundColor;
         outline: none;
         border: 1px solid black;
         padding: 11px;

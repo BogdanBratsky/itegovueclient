@@ -162,7 +162,7 @@ export default {
     }
     
     &__img img {
-        max-width: 300px;
+        max-width: 200px;
         max-height: 500px;
     }
     

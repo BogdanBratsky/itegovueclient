@@ -1,5 +1,5 @@
 <template>
-    <header class="header">
+    <header :class="{'header': true, 'header--fixed': isFixed, 'header--hidden': isHidden}">
         <div class="container">
             <nav class="header__nav">
                 <div class="header__logo-wrap">
@@ -11,12 +11,40 @@
                     <router-link to="/main">
                         <div class="header__options-item">Главная</div>
                     </router-link>
-                    <div class="header__options-item">Решения</div>
-                    <div class="header__options-item">Сравнения</div>
-                    <div class="header__options-item">Услуги</div>
+                    <div 
+                        @mouseover="handleMouseEnter" 
+                        @mouseleave="handleMouseLeave"
+                        class="header__options-item"
+                    >
+                        Услуги
+                        <img src="../assets/images/interface/down.svg" alt="">
+                        <ul 
+                            v-if="servicesIsOpen" 
+                            class="services-list"
+                            @mouseover="handleMouseEnter" 
+                            @mouseleave="handleMouseLeave"
+                        >
+                            <li class="services-list__item">Администрирование</li>
+                            <li class="services-list__item">Техническая поддержка</li>
+                            <li class="services-list__item">Сервера 1с</li>
+                            <li class="services-list__item">Ремонт компьютеров и орг. техники</li>
+                            <li class="services-list__item">Подбор оборудования</li>
+                            <li class="services-list__item">Подбор серверов в дата-центре</li>
+                            <li class="services-list__item">Рекламные компании Яндекс.Директ</li>
+                            <li class="services-list__item">Антивирусная защита</li>
+                            <li class="services-list__item">IP-телефония</li>
+                            <li class="services-list__item">ИТ-аутсорсинг</li>
+                            <li class="services-list__item">Резервное копирование данных</li>
+                            <li class="services-list__item">Миграция в облако</li>
+                            <li class="services-list__item">Видеонаблюдение</li>
+                        </ul>
+                    </div>
+                    <div class="header__options-item">О компании</div>
+                    <div class="header__options-item">FAQ</div>
                 </div>
-                <div class="header__phone">
-                    +7 (499) 348 99 33
+                <div class="header__phone" @click="togglePhoneVisibility">
+                    <span v-if="!isPhoneVisible">+7 (499) 348 9...</span>
+                    <span v-else>+7 (499) 348 99 33</span>
                 </div>
                 <div class="header__buttons">
                     <router-link to="/blog">
@@ -27,7 +55,7 @@
                     </router-link>
                     <div 
                         class="header__btn"
-                        @click="showForm()"
+                        @click="showForm"
                     >
                         Оставить заявку
                     </div>
@@ -37,8 +65,7 @@
         </div>
     </header>
 
-    <div @click="showForm()" v-if="isOpen" class="background"></div>
-    <ItegoForm v-if="isOpen" @close="showForm()"/>
+    <ItegoForm v-if="isOpen" @close="showForm"/>
 </template>
 
 <script>
@@ -47,7 +74,14 @@ import ItegoForm from '../components/ItegoForm.vue';
 export default {
     data() {
         return {
-            isOpen: false
+            isOpen: false,
+            isFixed: false,
+            isHidden: false,
+            isPhoneVisible: false,
+            lastScrollTop: 0,
+            servicesIsOpen: false,
+            isMouseOverServices: false,
+            isMouseOverMenu: false,
         }
     },
     components: {
@@ -55,13 +89,40 @@ export default {
     },
     methods: {
         showForm() {
-            this.isOpen = !this.isOpen
-            if (this.isOpen == true) {
+            this.isOpen = !this.isOpen;
+            if (this.isOpen) {
                 document.body.style.overflow = 'hidden';
             } else {
                 document.body.style.overflow = 'auto';
             }
+        },
+        togglePhoneVisibility() {
+            this.isPhoneVisible = !this.isPhoneVisible;
+        },
+        handleScroll() {
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+            if (currentScroll > this.lastScrollTop && currentScroll > 50) {
+                this.isHidden = true;
+            } else {
+                this.isHidden = false;
+            }
+
+            this.isFixed = currentScroll > 50;
+            this.lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+        },
+        handleMouseEnter() {
+            this.servicesIsOpen = true;
+        },
+        handleMouseLeave() {
+            this.servicesIsOpen = false;
         }
+    },
+    mounted() {
+        window.addEventListener('scroll', this.handleScroll);
+    },
+    beforeDestroy() {
+        window.removeEventListener('scroll', this.handleScroll);
     }
 }
 </script>
@@ -69,23 +130,25 @@ export default {
 <style lang="scss" scoped> 
 @import '../variables.scss';
 
-.background {
-    // z-index: 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: #000000;
-    opacity: 0.6;
-    width: 100%;
-    height: 100vh;
-}
-
 .header {
-    /* background-color: white;
-    border: 1px solid #dfdfdf;
-    box-shadow: 0 0 10px #dfdfdf;
-    margin-bottom: 10px; */
     font-family: "Jost", sans-serif;
+    transition: top 0.3s ease-in-out;
+
+    &--fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 5;
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid #e2e2e2;
+    }
+
+    &--hidden {
+        top: -100px;
+    }
+
     &__nav {
         margin: 0 auto;
         padding: 16px 0;
@@ -94,43 +157,80 @@ export default {
         justify-content: space-between;
         align-items: center;
     }
+
     &__logo-wrap {
         display: flex;
         align-items: center;
         cursor: pointer;
-        /* max-width: 90px;
-        max-height: 50px; */
     }
+
     #logo-img {
         user-select: none;
         height: 35px;
     }
+
     &__options {
         user-select: none;
         display: flex;
         font-size: 17px;
-    }
-    &__options-item {
-        cursor: pointer;
-        padding: 5px 11px;
-        border-radius: 5px;
-        color: black;
-        &:hover {
-            background-color: #f0f0f0;
-            transition: 0.2s;
+        
+        &-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px 11px;
+            border-radius: 5px;
+            color: black;
+
+            &:hover {
+                background-color: #f0f0f0;
+                transition: 0.2s;
+            }
+
+            img {
+                max-width: 10px;
+                margin-left: 6px;
+            }
         }
-        // &:active {
-        //     color: red;
-        //     transition: 0.1s;
-        // }
     }
+
+    .services-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 5px 10px #dfdfdf;
+        border-radius: 5px;
+        background-color: white;
+        border: 1px solid #e6e6e6;
+        font-size: 14px;
+        &__item {
+            width: 250px;
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #e6e6e6;
+            color: #4e4e4e;
+            &:hover {
+                background-color: #f3f3f3;
+                text-decoration: underline;
+                transition: 0.2s;
+            }
+        }
+    }
+
     &__phone {
         color: #03001a;
+        cursor: pointer;
     }
+
     &__buttons {
         display: flex;
         align-items: center;
     }
+
     &__blog-btn {
         user-select: none;
         display: flex;
@@ -143,20 +243,18 @@ export default {
         padding: 6px 10px;
         font-size: 18px;
         margin-right: 12px;
-        // &:hover {
-        //     background-color: #f7f8ff;
-        //     transition: 0.2s;
-        // }
+
         &:active {
-            // border: 1px solid $btnHoverCol;
             background-color: #ffffff;
         }
+
         & img {
             max-width: 15px;
             max-height: 20px;
             margin-left: 6px;
         }
     }
+
     &__btn {
         user-select: none;
         cursor: pointer;
@@ -167,15 +265,16 @@ export default {
         color: white;
         font-size: 18px;
         box-shadow: 0 0 12px #bfbfbf;
+
         &:hover {
             background-color: $btnHoverCol;
             transition: 0.2s;
         }
     }
+
     &__burger {
         display: none;
         font-size: 25px;
     }
 }
-
 </style>

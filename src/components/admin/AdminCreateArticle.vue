@@ -26,7 +26,7 @@
                 }"
                 initial-value="Welcome to TinyMCE!"
             />
-            <div class="">Выбор категории</div>
+            <div style="margin-top: 12px;">Выбор категории</div>
             <select v-model="formData.category" name="Выбор категории">
                 <option v-for="category in categories" :key="category.id" :value="category.id">
                     {{ category.name }}
@@ -139,6 +139,9 @@ export default {
         &::placeholder {
             color: #dfdfdf;
         }
+    }
+    editor {
+        border: red;
     }
     &__title-input {
         font-size: 35px;
