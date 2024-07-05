@@ -8,20 +8,36 @@
                     </router-link>
                 </div>
                 <div class="footer-contacts">
-                    <div class="footer-contacts__item">
-                        <img src="../assets/images/contacts/mail.svg" alt="">
-                        support@itego.pro
-                    </div>
-                    <div class="footer-contacts__item">
-                        <img src="../assets/images/contacts/phone.svg" alt="">
-                        +7 (499) 348 99 33
-                    </div>
+                    <a href="https://vk.com/itegopro">
+                        <div class="footer-contacts__item">
+                            <img src="../assets/images/contacts/vk.svg" alt="">
+                            vk.com/itegopro
+                        </div>
+                    </a>
                     <a href="https://www.instagram.com/itegopro/">
                         <div class="footer-contacts__item">
                             <img src="../assets/images/contacts/instagram.svg" alt="">
                             @itegopro
                         </div>
                     </a>
+                    <div class="footer-contacts__item" @click="togglePhoneVisibility">
+                        <img src="../assets/images/contacts/phone.svg" alt="">
+                        <span v-if="!isPhoneVisible">+7 (499) 348 9...</span>
+                        <span v-else>
+                            <a href="tel:+74993489933">
+                                +7 (499) 348 99 33
+                            </a>
+                        </span>
+                    </div>
+                    <div class="footer-contacts__item" @click="toggleEmailVisibility">
+                        <img src="../assets/images/contacts/mail.svg" alt="">
+                        <span v-if="!isEmailVisible">help@ite...</span>
+                        <span v-else>
+                            <a href="mailto:help@itego.pro ">
+                                help@itego.pro 
+                            </a>
+                        </span>
+                    </div>
                 </div>
             </nav>
         </div>
@@ -30,7 +46,21 @@
 
 <script>
 export default {
-    name: 'ItegoFooter'
+    name: 'ItegoFooter',
+    data() {
+        return {
+            isPhoneVisible: false,
+            isEmailVisible: false
+        }
+    },
+    methods: {
+        togglePhoneVisibility() {
+            this.isPhoneVisible = true;
+        },
+        toggleEmailVisibility() {
+            this.isEmailVisible = true;
+        },
+    }
 }
 </script>
 
@@ -55,18 +85,22 @@ export default {
     display: flex;
     align-items: center;
     &__item {
-        // cursor: pointer;
+        cursor: pointer;
         // background-color: $backgroundColor;
         background-color: #f6f6f6;
         padding: 14px 15px;
-        color: gray;
+        color: #808080;
         border-radius: 8px;
         // box-shadow: 0 0 12px #dfdfdf;
         font-size: 16px;
         display: flex;
         align-items: center;
         margin-left: 12px;
-        & img {
+        a {
+            color: #808080;
+        }
+        img {
+            // filter: grayscale(50%);
             user-select: none;
             margin-right: 12px;
             width: 22px;

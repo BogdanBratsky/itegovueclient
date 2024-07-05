@@ -44,7 +44,11 @@
                 </div>
                 <div class="header__phone" @click="togglePhoneVisibility">
                     <span v-if="!isPhoneVisible">+7 (499) 348 9...</span>
-                    <span v-else>+7 (499) 348 99 33</span>
+                    <span v-else>
+                        <a href="tel:+74993489933">
+                            +7 (499) 348 99 33
+                        </a>
+                    </span>
                 </div>
                 <div class="header__buttons">
                     <router-link to="/blog">
@@ -97,7 +101,7 @@ export default {
             }
         },
         togglePhoneVisibility() {
-            this.isPhoneVisible = !this.isPhoneVisible;
+            this.isPhoneVisible = true;
         },
         handleScroll() {
             const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
@@ -224,6 +228,9 @@ export default {
     &__phone {
         color: #03001a;
         cursor: pointer;
+        span, a {
+            color: #03001a;
+        }
     }
 
     &__buttons {
