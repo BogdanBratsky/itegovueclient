@@ -71,6 +71,7 @@ export default {
     &__wrap {
         display: flex;
         flex-wrap: wrap;
+        // align-items: center;
         justify-content: space-between;
         width: 100%;
     }
@@ -82,10 +83,10 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 283px;
-        height: 250px;
+        width: 224px;
+        height: 200px;
         margin-bottom: 12px;
-        font-size: 20px;
+        font-size: 18px;
         text-align: center;
         padding: 20px;
     }

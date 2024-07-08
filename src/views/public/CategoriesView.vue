@@ -51,6 +51,8 @@ export default {
                 .get(`${serverAddres}/categories/${id}`)
                 .then(response => {
                     this.category = response.data.category.name
+                    document.title = this.category
+
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -66,7 +68,6 @@ export default {
         next();
     },
     mounted() {
-        document.title = this.category
         this.getArticles(this.$route.params.id)
         this.getCategory(this.$route.params.id)
     },
