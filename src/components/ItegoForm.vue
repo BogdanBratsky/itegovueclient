@@ -1,5 +1,5 @@
 <template>
-    <form v-if="!formSubmitted" @submit.prevent="sendForm()" action="" class="itego-form">
+    <form @submit.prevent="sendForm()" action="" class="itego-form">
         <div 
             class="itego-form__cancel"
             @click="close"
@@ -12,30 +12,24 @@
         <div class="itego-form__label">Ваше имя:</div>
         <input v-model="formData.name" class="itego-form__input" placeholder="Имя" type="text">
         <div class="itego-form__label">Ваш телефон:</div>
-        <input v-model="formData.email" class="itego-form__input" placeholder="Телефон" type="text">
+        <input v-model="formData.phone" @input="validatePhone" class="itego-form__input" placeholder="Телефон" type="text">
+        <div v-if="phoneErrorMessage" class="itego-form__error">{{ phoneErrorMessage }}</div>
         <div class="itego-form__label">Или ваша почта:</div>
-        <input v-model="formData.phone" class="itego-form__input" placeholder="E-mail" type="text">
+        <input v-model="formData.email" class="itego-form__input" placeholder="E-mail" type="text">
+        <div class="itego-form__policy">
+            <a href="/itego.docx" download="itego.docx" @click="policyAccepted = true">
+                Политика конфиденциальности itego
+            </a>
+        </div>
         <div class="itego-form__chkbx">
-            <input v-model="formData.consent" type="checkbox" name="" id="">
+            <input v-model="formData.consent" :disabled="!policyAccepted" type="checkbox">
             Я разрешаю обработку моих персональных данных
         </div>
         <div v-if="errorMessage" class="itego-form__error">{{ errorMessage }}</div>
         <button class="itego-form__btn">Отправить</button>
     </form>
     
-    <div v-if="formSuccess" class="itego-form">
-        <div class="itego-form__succes-text">
-            Спасибо, что оставили заявку!
-        </div>
-        <div class="itego-form__success-img">
-            <img src="../assets/images/card_imgs/9.svg" alt="">
-        </div>
-        <div @click="closeAndResetUrl" class="itego-form__success-close">
-            Закрыть
-        </div>
-    </div>
-
-    <div @click="closeAndResetUrl" class="background"></div>
+    <div @click="close" class="background"></div>
 </template>
 
 <script>
@@ -53,15 +47,10 @@ export default {
                 phone: '',
                 consent: false
             },
-            formSubmitted: false,
-            formSuccess: false,
             errorMessage: '',
-            initialUrl: ''
+            phoneErrorMessage: '',
+            policyAccepted: false
         }
-    },
-    mounted() {
-        // Сохраняем текущий URL при монтировании компонента
-        this.initialUrl = window.location.href;
     },
     methods: {
         validateForm() {
@@ -75,51 +64,49 @@ export default {
                 this.errorMessage = 'Пожалуйста, введите ваш телефон или почту.';
                 return false;
             }
+            if (this.formData.phone && !this.formData.phone.match(/^\d+$/)) {
+                this.errorMessage = 'Пожалуйста, введите корректный номер телефона.';
+                return false;
+            }
             if (!this.formData.consent) {
                 this.errorMessage = 'Пожалуйста, разрешите обработку персональных данных.';
                 return false;
             }
             return true;
         },
+        validatePhone(event) {
+            const value = event.target.value;
+            if (!/^\d*$/.test(value)) {
+                this.phoneErrorMessage = 'Пожалуйста, вводите только цифры.';
+            } else {
+                this.phoneErrorMessage = '';
+            }
+            this.formData.phone = value.replace(/\D/g, '');
+        },
         async sendForm() {
             if (!this.validateForm()) {
                 return;
             }
-            await axios
-                .post(`${serverAddres}/send-email`, this.formData, {
+            try {
+                const response = await axios.post(`${serverAddres}/send-email`, this.formData, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                })
-                .then(response => {
-                    if (response.status === 200) {
-                        this.formSubmitted = true;
-                        this.formSuccess = true;
-                        this.changeUrl('/thanks');
-                    } else {
-                        this.formSubmitted = true;
-                        this.formSuccess = false;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    this.formSubmitted = true;
-                    this.formSuccess = false;
                 });
+
+                if (response.status === 200) {
+                    this.$router.push('/thanks');
+                    this.$emit('close');
+                } else {
+                    this.errorMessage = 'Произошла ошибка при отправке формы. Пожалуйста, попробуйте еще раз.';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                this.errorMessage = 'Произошла ошибка при отправке формы. Пожалуйста, попробуйте еще раз.';
+            }
         },
         close() {
             this.$emit('close');
-        },
-        changeUrl(newUrl) {
-            const absoluteUrl = new URL(newUrl, window.location.origin);
-            history.pushState(null, '', absoluteUrl);
-        },
-        closeAndResetUrl() {
-            this.$emit('close');
-            // Возвращаемся к исходному URL
-            history.pushState(null, '', this.initialUrl);
-            // Перезагружаем страницу
-            window.location.reload();
         }
     }
 }
@@ -155,31 +142,6 @@ export default {
     width: 500px;
     border-radius: 12px;
 
-    &__succes-text {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 30px;
-        padding: 30px 0;
-    }
-    &__success-img {
-        display: flex;
-        justify-content: center;
-        img {
-            max-width: 300px;
-            margin-bottom: 30px;
-        }
-    }
-    &__success-close {
-        cursor: pointer;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        margin-bottom: 30px;
-        font-size: 18px;
-        text-decoration: underline;
-        color: $buttonColor;
-    }
     &__cancel {
         user-select: none;
         cursor: pointer;
@@ -207,6 +169,12 @@ export default {
         padding: 11px;
         margin-bottom: 35px;
         width: 100%;
+    }
+    &__policy {
+        margin-bottom: 8px;
+        a {
+            text-decoration: underline;
+        }
     }
     &__chkbx {
         input {

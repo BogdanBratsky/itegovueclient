@@ -8,13 +8,13 @@
                     </router-link>
                 </div>
                 <div class="footer-contacts">
-                    <a href="https://vk.com/itegopro">
+                    <a href="https://vk.com/itegopro" target="_blank">
                         <div class="footer-contacts__item">
                             <img src="../assets/images/contacts/vk.svg" alt="">
                             vk.com/itegopro
                         </div>
                     </a>
-                    <a href="https://www.instagram.com/itegopro/">
+                    <a href="https://www.instagram.com/itegopro/" target="_blank">
                         <div class="footer-contacts__item">
                             <img src="../assets/images/contacts/instagram.svg" alt="">
                             @itegopro
@@ -33,7 +33,7 @@
                         <img src="../assets/images/contacts/mail.svg" alt="">
                         <span v-if="!isEmailVisible">help@ite...</span>
                         <span v-else>
-                            <a href="mailto:help@itego.pro ">
+                            <a href="mailto:help@itego.pro">
                                 help@itego.pro 
                             </a>
                         </span>

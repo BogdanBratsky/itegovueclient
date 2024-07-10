@@ -36,7 +36,11 @@ const routes = [
             component: () => import('../views/public/CategoriesView.vue'),
           },
         ]
-      }
+      },
+      {
+        path: '/thanks',
+        component: () => import('../views/public/ThanksView.vue'),
+      },
     ]
   },
   // маршруты для администраторской части сайта
