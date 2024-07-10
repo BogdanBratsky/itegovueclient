@@ -43,6 +43,10 @@ const routes = [
       },
     ]
   },
+  {
+    path: '/privacy-policy',
+    component: () => import('../views/public/PrivacyPolicyView.vue'),
+  },
   // маршруты для администраторской части сайта
   {
     path: '/admin',

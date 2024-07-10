@@ -29,7 +29,7 @@ a {
 
 li {
     text-decoration: none;
-    list-style: none;
+    // list-style: none;
 }
 
 html, body {

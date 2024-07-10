@@ -17,9 +17,9 @@
         <div class="itego-form__label">Или ваша почта:</div>
         <input v-model="formData.email" class="itego-form__input" placeholder="E-mail" type="text">
         <div class="itego-form__policy">
-            <a href="/itego.docx" download="itego.docx" @click="policyAccepted = true">
+            <router-link to="/privacy-policy" target="_blank" @click="policyAccepted = true">
                 Политика конфиденциальности itego
-            </a>
+            </router-link>
         </div>
         <div class="itego-form__chkbx">
             <input v-model="formData.consent" :disabled="!policyAccepted" type="checkbox">
